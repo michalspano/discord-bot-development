@@ -1,47 +1,89 @@
-import discord
 from random import *
+
+import discord
+import os
+import requests
+
 client = discord.Client()
 
 
-def load_bot_token(path):
-    with open(path, "r") as inputTextFile:
-        return inputTextFile.readline()
+#  Deprecated functions
+# def load_bot_token(path):
+#     with open(path, "r") as inputTextFile:
+#         return inputTextFile.readline()
+
+
+# def load_quotes(data_path):
+#     with open(data_path, "r") as quotesInputTextFile:
+#         return [line.strip() for line in quotesInputTextFile]
+
+
+def load_random_quotes(api, r):
+    global quotes
+    quotes.clear()
+    for i in range(r):
+        random_quote = requests.get(api).json()
+        quote_content, quote_author = random_quote["content"], random_quote["author"]
+        output_quote = quote_content + "\n\n" + "By: " + quote_author
+        quotes.append(output_quote)
 
 
 @client.event
-async def detect_bot_status():
+async def on_ready():
     print(f"Logged in as {client.user} [bot].")
 
 
 @client.event
-async def read_message(m):
+async def on_message(message):
+    global action_count, quotes
+    user_data = str(message.author).split("#")
+    user_name, user_code = user_data[0], user_data[1]
+    user_message = str(message.content)
+    message_channel = str(message.channel.name)
+    input_message = user_message.lower()
 
-    if m.author != client.user:
-        user_data = str(m.author).split("#")
-        user_name, user_code = user_data[0], user_data[1]
-        user_message = str(m.content)
-        message_channel = str(m.channel.name)
+    #  Activity monitor
+    print(f"Log -- {user_data}: {user_message} ({message_channel})")
 
-        #  Activity monitor
-        print(f"Log -- {user_data}: {user_message} ({message_channel})")
+    if message.author == client.user:
+        return
 
-        #  Greets the user
-        if m.channel.name == "general":
-            if user_message.lower() == "!hi":
-                await m.channel.send(f"Hello, {user_name} (#{user_code})!")
+    #  Greets the user
+    if message.channel.name == "general":
+        if input_message == "!hi":
+            await message.channel.send(f"Hello, {user_name} [#{user_code}]!")
 
-        #  Inputs random motivation quote
-        if m.channel.name == "motivation":
-            if user_message.lower() == "!q":
-                await m.channel.send(f"Here's a quote just for you {choice(quotes)}")
+    if action_count >= quote_range:
+        print("***Importing new quotes***")
+        load_random_quotes(static_path, quote_range)
+        action_count = 0
+
+    #  Inputs random motivation quote
+    if message.channel.name == "motivation":
+        if input_message == "!q":
+            action_count += 1
+            await message.channel.send(f"Here's a quote just for you: \n"
+                                       f"{choice(quotes)}")
+
+    #  Inputs random number
+    if message.channel.name == "random":
+        if input_message == "!r":
+            await message.channel.send(f"Your random number is: *{randint(0, 1000)}*")
+
+        c_count = 0
+        for i in range(len(input_message)):
+            if input_message[i] == ":":
+                c_count += 1
+        if c_count == 2:
+            user_range = input_message.split(":")
+            range_min, range_max = int(user_range[1]), int(user_range[2])
+            await message.channel.send(f"Your random number in the range <{range_min}; {range_max}>"
+                                       f"\n\n *Result: {randint(range_min, range_max)}*")
 
 
-quotes = ["“The Best Way To Get Started Is To Quit Talking And Begin Doing.” – Walt Disney",
-          "“The Pessimist Sees Difficulty In Every Opportunity. The Optimist Sees Opportunity In Every Difficulty.” – "
-          "Winston Churchill",
-          "“Don’t Let Yesterday Take Up Too Much Of Today.” – Will Rogers",
-          "“We May Encounter Many Defeats But We Must Not Be Defeated.” – Maya Angelou",
-          "“Creativity Is Intelligence Having Fun.” – Albert Einstein"]
-
-bot_token = load_bot_token("bot_token.txt")
-client.run(bot_token)
+quotes = list()
+action_count, quote_range = 0, 10
+static_path = "https://api.quotable.io/random"
+load_random_quotes(static_path, quote_range)
+#  bot_token = load_bot_token("bot_token.txt"); deprecated
+client.run(os.environ["TOKEN"])
