@@ -1,10 +1,12 @@
 from random import *
 from datetime import datetime
+from keep_alive import keep_alive
 
 import discord
 import os
 import requests
 import praw
+import json
 
 client = discord.Client()
 
@@ -20,16 +22,6 @@ reddit = praw.Reddit(client_id=r_api[0],
                      user_agent=r_api[2],
                      check_for_async=False)
 
-#  Deprecated functions
-# def load_bot_token(path):
-#     with open(path, "r") as inputTextFile:
-#         return inputTextFile.readline()
-
-
-# def load_quotes(data_path):
-#     with open(data_path, "r") as quotesInputTextFile:
-#         return [line.strip() for line in quotesInputTextFile]
-
 
 def load_random_quotes(api, r):
     global quotes
@@ -39,6 +31,24 @@ def load_random_quotes(api, r):
         quote_content, quote_author = random_quote["content"], random_quote["author"]
         output_quote = quote_content + "\n\n" + "By: " + quote_author
         quotes.append(output_quote)
+
+
+def load_inspirational_quotes():
+    response = requests.get("https://zenquotes.io/api/random")
+    json_data = json.loads(response.text)
+    quote = json_data[0]["q"] + " - " + json_data[0]["a"]
+    return quote
+
+
+def load_encourage_data(path):
+    with open(path, "r") as inputEncourageModule:
+        loaded_data = [line.strip() for line in inputEncourageModule]
+    split_index = loaded_data.index("*")
+    return [loaded_data[:split_index], loaded_data[split_index + 1:]]
+
+
+content = load_encourage_data("notice_me.txt")
+emergency_list, encourage_list = content[0], content[1]
 
 
 #  Syntax: '!m/r/sub' - sub[meme], '!n: x: y'
@@ -90,6 +100,9 @@ async def on_message(message):
         if input_message == "!hi":
             await message.channel.send(f"Hello, {user_name} [#{user_code}]!")
 
+    if any(word in message.content for word in emergency_list):
+        await message.channel.send(f"{choice(encourage_list)} {message.author.mention}")
+
     if action_count >= quote_range:
         print("***Importing new quotes***")
         load_random_quotes(static_path, quote_range)
@@ -101,6 +114,9 @@ async def on_message(message):
             action_count += 1
             await message.channel.send(f"Here's a quote just for you: \n"
                                        f"{choice(quotes)}")
+
+        elif message.content.startswith("!inspire"):
+            await message.channel.send(load_inspirational_quotes())
 
     #  Inputs random number
     if message.channel.name == "random":
@@ -142,4 +158,5 @@ action_count, quote_range = 0, 10
 static_path = "https://api.quotable.io/random"
 load_random_quotes(static_path, quote_range)
 #  bot_token = load_bot_token("bot_token.txt"); deprecated
+keep_alive()
 client.run(os.environ["TOKEN"])
