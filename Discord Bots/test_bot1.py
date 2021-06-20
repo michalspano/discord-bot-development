@@ -20,7 +20,6 @@ reddit = praw.Reddit(client_id=r_api[0],
                      user_agent=r_api[2],
                      check_for_async=False)
 
-
 #  Deprecated functions
 # def load_bot_token(path):
 #     with open(path, "r") as inputTextFile:
@@ -42,17 +41,25 @@ def load_random_quotes(api, r):
         quotes.append(output_quote)
 
 
-def change_range_event(msg, count):
+#  Syntax: '!m/r/sub' - sub[meme], '!n: x: y'
+def check_event(msg, identifier, count):
     for i in range(len(msg)):
-        if msg[i] == ":":
+        if msg[i] == identifier:
             count += 1
     if count == 2:
         return True
 
 
-def load_memes():
-    sub_reddit = reddit.subreddit("mathmemes")
-    return choice([submission for submission in sub_reddit.top(limit=10)])
+def load_from_custom_reddit(sub, limit):
+    sub_reddit = reddit.subreddit(sub)
+    return choice([submission for submission in sub_reddit.top(limit=limit)])
+
+
+def embed_submission(submission):
+    sub_name, sub_url = submission.title, submission.url
+    embed_message = discord.Embed(title=sub_name)
+    embed_message.set_image(url=sub_url)
+    return embed_message
 
 
 @client.event
@@ -97,10 +104,10 @@ async def on_message(message):
 
     #  Inputs random number
     if message.channel.name == "random":
-        if input_message == "!r":
+        if input_message == "!n":
             await message.channel.send(f"Your random number is: *{randint(0, 1000)}*")
 
-        if change_range_event(input_message, 0):
+        elif check_event(input_message, ":", 0):
             user_range = input_message.split(":")
             range_min, range_max = int(user_range[1]), int(user_range[2])
             await message.channel.send(f"Your random number in the range <{range_min}; {range_max}>"
@@ -117,17 +124,17 @@ async def on_message(message):
         animated_logo = discord.File("/Users/michalspano/Google Drive/Discord Bot Development/Docs/sever-animation.gif")
         await message.channel.send("An animated logo!", file=animated_logo)
 
+    #  Inputs random meme from 'r/mathmemes'
     if message.channel.name == "memes":
         if input_message == "!m":
-            submission_data = load_memes()
+            subs = ["physicsmemes", "ProgrammerHumor", "mathmemes"]
+            submission_data = load_from_custom_reddit(choice(subs), 20)
+            await message.channel.send(embed=embed_submission(submission_data))
 
-            name = submission_data.title
-            url = submission_data.url
-
-            em = discord.Embed(title=name)
-            em.set_image(url=url)
-
-            await message.channel.send(embed=em)
+        elif check_event(input_message, "/", 0):
+            subreddit_data = input_message.split("/")[2]
+            submission_data = load_from_custom_reddit(subreddit_data, 20)
+            await message.channel.send(embed=embed_submission(submission_data))
 
 
 quotes = list()
