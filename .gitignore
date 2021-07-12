@@ -131,3 +131,4 @@ dmypy.json
 # Test units
 Reminder Bot/main.py
 Spotify Wrapper/.cache
+Reminder Bot/data.json
