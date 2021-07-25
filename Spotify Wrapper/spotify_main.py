@@ -85,7 +85,7 @@ async def on_message(message):
         await message.channel.send(embed=embed_object)  # Embed msg
         await message.channel.send(message_object_default_embed)  # Non-embed msg / in-built 'Spotify Preview'
 
-    elif message.content.startswith("!help"):
+    elif message.content.startswith("?help"):
         returned_embed = HelpCommands(path="help_command.txt").embed_help_commands()
         await message.channel.send(embed=returned_embed)
 
