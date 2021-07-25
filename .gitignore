@@ -132,3 +132,6 @@ dmypy.json
 Reminder Bot/main.py
 Spotify Wrapper/.cache
 Reminder Bot/data.json
+
+# Exclude .idea
+.idea
