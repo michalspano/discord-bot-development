@@ -8,6 +8,8 @@ from web import keep_alive
 api = {"discord_client": discord.Client(),
        "spotify_client": spotipy.Spotify(auth_manager=SpotifyClientCredentials())}
 
+client = api["discord_client"]
+
 
 #  Spotify class to parse data from global API via Spotify
 class Spotify:
@@ -40,7 +42,7 @@ class HelpCommands:
         with open(self.path, "r") as help_commands:
             for line in help_commands.readlines():
                 help_commands_desc += line
-        embed_message = discord.Embed(title="!help commands",
+        embed_message = discord.Embed(title="?help commands",
                                       description=help_commands_desc,
                                       url=str(os.environ["GITHUB_LINK"]),
                                       color=discord.Color.dark_green())
@@ -49,38 +51,39 @@ class HelpCommands:
         return embed_message
 
 
-@api["discord_client"].event
+@client.event
 async def on_ready():  # Log-Status BOT
-    await api["discord_client"].change_presence(activity=discord.Activity(type=discord.ActivityType.listening,
-                                                                          name="a song | !help to start"))  # Custom Bot status
-    print("BOT Status: ON", api["discord_client"].user)
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,
+                                                           name="a song | ?help to start"))  # Custom
+    # Bot status
+    print("BOT Status: ON", client.user)
 
 
-@api["discord_client"].event
+@client.event
 async def on_message(message):
     #  Returns None if bot message detected
-    if message.author == api["discord_client"].user:
+    if message.author == client.user:
         return
 
-    #  Returns a musical thread, syntax: '!s' - a random song,
-    #  '!s/genre' - a random song from a specified genre
-    if message.content.startswith("!s"):
-        if message.content.startswith("!s"):
-            msg = message.content.split("/")
+    #  Returns a musical thread, syntax: '?s' - a random song,
+    #  '?s/genre' - a random song from a specified genre
+    if message.content.startswith("?s"):
 
-            #  If a specific genre is specified
-            if len(msg) > 1:
-                genre = msg[1]
-            else:  # Default genre selection
-                genre = r.choice(["Pop", "Hip-Hop", "Rap", "Ambient", "EDM"])
+        msg = message.content.split("/")
 
-            #  Randomized arr[song_title, song_cover, song_url]
-            final_result = Spotify(artist=f"{genre}").parse_music_data()
-            message_object_default_embed = final_result[2]  # Message to embed via in-build Discord Spotify thread
-            embed_object = Spotify.embed_music_data(final_result)
+        #  If a specific genre is selected
+        if len(msg) > 1:
+            genre = msg[1]
+        else:  # Default genre selection
+            genre = r.choice(["Pop", "Hip-Hop", "Rap", "Ambient", "EDM"])
 
-            await message.channel.send(embed=embed_object)  # Embed msg
-            await message.channel.send(message_object_default_embed)  # Non-embed msg / in-built 'Spotify Preview'
+        #  Randomized arr[song_title, song_cover, song_url]
+        final_result = Spotify(artist=f"{genre}").parse_music_data()
+        message_object_default_embed = final_result[2]  # Message to embed via in-build Discord Spotify thread
+        embed_object = Spotify.embed_music_data(final_result)
+
+        await message.channel.send(embed=embed_object)  # Embed msg
+        await message.channel.send(message_object_default_embed)  # Non-embed msg / in-built 'Spotify Preview'
 
     elif message.content.startswith("!help"):
         returned_embed = HelpCommands(path="help_command.txt").embed_help_commands()
@@ -88,4 +91,4 @@ async def on_message(message):
 
 
 keep_alive()  # Online WebProvider through Flask
-api["discord_client"].run(os.environ["TOKEN"])
+client.run(os.environ["TOKEN"])
