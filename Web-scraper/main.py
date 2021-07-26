@@ -2,8 +2,9 @@
 # By Michal Špano (@michalspano)
 
 import discord
-import os
-from requests_html import HTMLSession
+# import os
+import requests
+from bs4 import BeautifulSoup
 from discord.ext import commands
 
 # Instantiate a bot client method,
@@ -22,11 +23,12 @@ async def on_ready():
 
 # bot.run(os.environ["TOKEN"])
 
-session = HTMLSession()
-url = "https://news.google.com/topstories?hl=sv&gl=SE&ceid=SE:sv"
 
-r = session.get(url)
-r.html.render(sleep=1, scrolldown=5)
-articles = r.html.find("article")
+def main():
+    url = "https://news.google.com/topstories?hl=sv&gl=SE&ceid=SE:sv"
+    website = requests.post(url)
+    print(website.content)
 
-print(articles)
+
+if __name__ == "__main__":
+    main()
