@@ -8,6 +8,7 @@ import json
 import requests
 import discord
 import random as r
+import logging
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 from discord.ext import commands
@@ -18,6 +19,8 @@ from web import keep_alive
 bot = commands.AutoShardedBot(commands.when_mentioned_or("?"), help_command=None,
                               activity=discord.Activity(type=discord.ActivityType.listening,
                                                         name="?start"))
+# Create a logging instance
+logger = logging.getLogger("Discord status LOG")
 
 
 @bot.event
@@ -31,13 +34,18 @@ async def start_news_thread(ctx, *, time: int = 3600):
     # Function to initialise the news thread
     while True:
         # Receive data from web using a web scraper class
-        class_instance1 = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
+        scraped_data_set = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
 
         # Process scraped data in an embedded message format
-        embed_output = WebsiteScraper(path=class_instance1).embed_discord_message()
+        embed_output = WebsiteScraper(path=scraped_data_set).embed_discord_message()
+
+        # Invoke logger (debugging purposes)
+        logger.warning("Sending a new post to the Discord channel...")
 
         # Send the embedded message and let the function await in a desire interval
         await ctx.send(embed=embed_output)
+
+        # Delay the post submission
         await s(time)
 
 
