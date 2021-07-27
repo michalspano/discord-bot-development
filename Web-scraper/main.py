@@ -16,10 +16,9 @@ from discord.ext import commands
 from asyncio import sleep as s
 from web import keep_alive
 
-# Instantiate a bot client method using Discord commands with a def. prefix '?'
-bot = commands.AutoShardedBot(commands.when_mentioned_or("?"), help_command=None,
-                              activity=discord.Activity(type=discord.ActivityType.listening,
-                                                        name="?start"))
+# Instantiate a bot client method using Discord commands with a def. prefix '$'
+bot = commands.AutoShardedBot(commands.when_mentioned_or("$"), help_command=None)
+
 # Create a logging instance
 logger = logging.getLogger("Discord status LOG")
 
