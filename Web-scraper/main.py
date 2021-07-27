@@ -1,6 +1,7 @@
 # Swedish News Discord Bot
 # By Michal Špano (@michalspano)
 # Started 24/07/2021
+# Using Slovak web browser settings
 
 # Libraries used
 import os
@@ -94,11 +95,9 @@ class WebsiteScraper:
                 raw_time = str(data_description[0])
                 description = data_description[1]
 
-                # Rewrite the time format in a different language
-                time_hours = int(raw_time.split()[1])
-
-                # Create the final time message
-                time_message = f"{time_hours} hours(s) ago"
+                # Create the final time message (optional)
+                # Command out if using an English web browser
+                time_message = format_time(raw_time)
 
                 # Create a data set from scraped data
                 data_set = {"title": title, "description": description,
@@ -129,7 +128,28 @@ class WebsiteScraper:
         return embed_message
 
 
+# Optional function, only when using a non-English web browser (Slovak in this case)
+def format_time(raw_t):
+
+    # Detect if hour(s) or min(s)
+    def detect_format(a):
+        if a == 'h':
+            return "hours(s)"
+        else:
+            return "min(s)"
+
+    # Identifier set as the first char of the string
+    identifier = str(raw_t.split()[2])[0]
+
+    # Time key returned from the function
+    key = detect_format(identifier)
+    time_hours = int(raw_t.split()[1])
+
+    # Return the formatted time message
+    return f"{time_hours} {key} ago"
+
+
 # This is an executable program
 if __name__ == '__main__':
-    bot.run(os.environ["TOKEN"])
     # keep_alive()
+    bot.run(os.environ["TOKEN"])
