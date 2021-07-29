@@ -16,7 +16,8 @@ from utils.core import WebsiteScraper
 from utils.web import keep_alive
 
 # Instantiate a bot client method using Discord commands with a def. prefix '$'
-bot = commands.AutoShardedBot(commands.when_mentioned_or("$"), help_command=None,
+PREFIX = '$'
+bot = commands.AutoShardedBot(commands.when_mentioned_or(PREFIX), help_command=None,
                               activity=discord.Activity(type=discord.ActivityType.listening,
                               name="$news"))
 
@@ -27,6 +28,7 @@ async def on_ready():
     print(f"Logged in as {bot.user}; {datetime.now()}")
 
 
+# Core news function
 @bot.command(aliases=["News", "news", "nw"])
 async def start_news_thread(ctx):
 
@@ -40,6 +42,7 @@ async def start_news_thread(ctx):
     await ctx.send(embed=embed_output)
 
 
+# Default help function to guide the user
 @bot.command(aliases=["Help", "help"])
 async def help_command(ctx):
 
@@ -58,6 +61,7 @@ async def help_command(ctx):
                             value="[@michalspano](https://github.com/michalspano)",
                             inline=True)
 
+    # Send the final embedded message to the discord channel
     await ctx.send(embed=embed_message)
 
 
