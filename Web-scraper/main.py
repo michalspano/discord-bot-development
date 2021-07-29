@@ -51,6 +51,10 @@ async def help_command(ctx):
                                   description="A smart web scraper delivering the latest Swedish news 🇸🇪",
                                   colour=discord.Colour.blurple())
 
+    # Specify author
+    embed_message.set_author(name=bot.user.display_name,
+                             icon_url=bot.user.avatar_url)
+
     # Add field about the bot commands
     embed_message.add_field(name="👾  |  My commands",
                             value="Use `#News`, `#news`, `#nw`",
