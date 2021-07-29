@@ -3,7 +3,7 @@
 # Started 24/07/2021
 # Using Slovak web browser settings
 
-# Libraries used
+# Import standard libraries
 import json
 import requests
 import discord
@@ -55,6 +55,8 @@ class WebsiteScraper:
 
                 # Split the desc. of the post to time data and the actual description text
                 raw_time = str(data_description[0])
+
+                # Use 'time_message = str(data_description[0])' for English servers
                 description = data_description[1]
 
                 # Create the final time message (optional)

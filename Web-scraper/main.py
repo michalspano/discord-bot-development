@@ -3,7 +3,7 @@
 # Started 24/07/2021
 # Creating a main module (executable)
 
-# Use standard libraries
+# Import standard libraries
 import os
 from discord.ext import commands
 from datetime import datetime
@@ -25,7 +25,7 @@ async def on_ready():
 
 
 @bot.command(aliases=["Start", "start"])
-async def start_news_thread(ctx, *, time: int = 1800):
+async def start_news_thread(ctx, *, time: int = 10):
     while True:
         # Receive data from web using a web scraper class
         scraped_data_set = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
@@ -40,12 +40,14 @@ async def start_news_thread(ctx, *, time: int = 1800):
         await s(time)
 
 
+# Instance of the main function
 def main():
-    # keep_alive()
+    keep_alive()
     print(f"Command executed: {datetime.now()}")
     bot.run(os.environ["TOKEN"])
 
 
 # This is an executable
 if __name__ == '__main__':
+    # Run the main function
     main()
