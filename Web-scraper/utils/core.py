@@ -4,49 +4,12 @@
 # Using Slovak web browser settings
 
 # Libraries used
-import os
 import json
 import requests
 import discord
 import random as r
-import logging
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
-from discord.ext import commands
-from asyncio import sleep as s
-from web import keep_alive
-
-# Instantiate a bot client method using Discord commands with a def. prefix '$'
-bot = commands.AutoShardedBot(commands.when_mentioned_or("$"), help_command=None)
-
-# Create a logging instance
-logger = logging.getLogger("Discord status LOG")
-
-
-@bot.event
-async def on_ready():
-    # Determine when bot is ready
-    print(f"Logged in as: {bot.user}")
-
-
-@bot.command(aliases=["Start", "start"])
-async def start_news_thread(ctx, *, time: int = 3600):
-    # Function to initialise the news thread
-    while True:
-        # Receive data from web using a web scraper class
-        scraped_data_set = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
-
-        # Process scraped data in an embedded message format
-        embed_output = WebsiteScraper(path=scraped_data_set).embed_discord_message()
-
-        # Invoke logger (debugging purposes)
-        logger.warning("Sending a new post to the Discord channel...")
-
-        # Send the embedded message and let the function await in a desire interval
-        await ctx.send(embed=embed_output)
-
-        # Delay the post submission
-        await s(time)
 
 
 # TODO: Create a Website scraper class
@@ -120,7 +83,6 @@ class WebsiteScraper:
         embed_message.add_field(name="⌚️  |  Posted", value=message_data["time"], inline=True)
 
         embed_message.add_field(name="🔗  |  Link", value=f"[Read more here]({message_data['link']})", inline=True)
-        embed_message.set_footer(text=f"{bot.user}")
 
         # Include the icon of the application as the thumbnail of the embedded message
         embed_message.set_thumbnail(url="https://github.com/michalspano/.docs/blob/main/SFU-News.png?raw=true")
@@ -146,9 +108,3 @@ def format_time(raw_t):
 
     # Return the formatted time message
     return f"{time_hours} {key} ago"
-
-
-# This is an executable program
-if __name__ == '__main__':
-    # keep_alive()
-    bot.run(os.environ["TOKEN"])
