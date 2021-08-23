@@ -139,3 +139,5 @@ Reminder Bot/data.json
 # Exclude secrets
 /Web-scraper/secrets.json
 
+# Exclude default macOS binary
+.DS_Store
