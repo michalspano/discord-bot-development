@@ -8,7 +8,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -128,11 +127,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Test units
-Reminder Bot/main.py
-Spotify Wrapper/.cache
-Reminder Bot/data.json
-
 # Exclude .idea
 .idea
 
@@ -140,4 +134,7 @@ Reminder Bot/data.json
 /Web-scraper/secrets.json
 
 # Exclude default macOS binary
-.DS_Store
+*.DS_Store
+
+# Exclude WIP modules
+Reminder Bot/
