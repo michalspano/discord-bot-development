@@ -8,15 +8,13 @@ import os
 import discord
 from discord.ext import commands
 from datetime import datetime
+from typing import Final
 
-# Import core package
 from utils.core import WebsiteScraper
-
-# Import HTTPS monitor
 from utils.web import keep_alive
 
 # Instantiate a bot client method using Discord commands with a def. prefix '$'
-PREFIX = '$'
+PREFIX: Final = '$'
 bot = commands.AutoShardedBot(commands.when_mentioned_or(PREFIX), help_command=None,
                               activity=discord.Activity(type=discord.ActivityType.listening,
                               name="$news"))
@@ -24,22 +22,25 @@ bot = commands.AutoShardedBot(commands.when_mentioned_or(PREFIX), help_command=N
 
 @bot.event
 async def on_ready():
-    # Determine if bot loaded successfully
     print(f"Logged in as {bot.user}; {datetime.now()}")
 
 
-# Core news function
+# News thread function
+# TODO: this functionality is currenly insupported
+# Issued file: `core.py`
 @bot.command(aliases=["News", "news", "nw"])
 async def start_news_thread(ctx):
 
-    # Receive data from web using a web scraper class
-    scraped_data_set = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
+    await ctx.send("This functionality is currently **not supported**.")
 
-    # Process scraped data in an embedded message format
-    embed_output = WebsiteScraper(path=scraped_data_set).embed_discord_message()
+    # Receive data from web using a web scraper class
+    # scraped_data_set = WebsiteScraper(path="secrets.json", parser="html5lib").load_website_data()
+
+    # # Process scraped data in an embedded message format
+    # embed_output = WebsiteScraper(path=scraped_data_set).embed_discord_message()
 
     # Send the embedded message and let the function await in a desire interval
-    await ctx.send(embed=embed_output)
+    # await ctx.send(embed=embed_output)
 
 
 # Default help function to guide the user
@@ -77,5 +78,4 @@ def main():
 
 # This is an executable
 if __name__ == '__main__':
-    # Run the main function
     main()

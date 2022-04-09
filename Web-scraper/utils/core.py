@@ -7,12 +7,11 @@
 import json
 import requests
 import discord
-import random as r
+from random import choice
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 
 
-# TODO: Create a Website scraper class
 class WebsiteScraper:
     def __init__(self, path, parser=None):
         self.path = path
@@ -29,13 +28,17 @@ class WebsiteScraper:
         web_page = urlopen(web_request).read()
 
         # Store instances of a web scraper data sets in a list of dicts.
-        data_list = list()
+        data_list: list = []
 
         # Open a Soup HTML Scraper with requests.Session()
         with requests.Session():
 
             # Create an instance of a 'soup' using the BeautifulSoup method
             soup = BeautifulSoup(web_page, self.parser)
+           
+            # FIXME: this method is currently not working.
+            #        The parser does not output proper data from the website.
+            #        Consider reimplementing the method using the 'soup' instance.
 
             # Iterate through all the 'posts' using a determined class div identifier from the HTMl skeleton
             for item in soup.find_all("div", attrs={"class": secrets["article-div"]}):
@@ -69,9 +72,13 @@ class WebsiteScraper:
 
                 # Append each dict. data set to a global list
                 data_list.append(data_set)
-
+        
+        # TODO: enable proper data output
         # Return randomly chosen post from the list
-        return r.choice(data_list)
+        # return choice(data_list)
+
+        # FIXME: Include provisional data output
+        return []
 
     # Embed scraped data in a Discord Embed() message format
     def embed_discord_message(self):
