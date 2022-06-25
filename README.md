@@ -1,5 +1,6 @@
 # Bot-Development
-Discord Bots using __Discord.py__ library.
+Discord Bots using __Discord.py__ | __Discord.js__ libraries.
+__Discord.js__ specific bots (using `TS`) found under `discord.js/`.
 
 ## Bots
 Add our bots to your __server__! 
