@@ -138,3 +138,6 @@ dmypy.json
 
 # Exclude WIP modules
 Reminder Bot/
+
+# exclude all node_modules
+node_modules/
