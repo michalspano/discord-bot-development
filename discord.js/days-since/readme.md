@@ -1,4 +1,8 @@
-## `Days Since` - the Discord Bot
+
+<h2>
+    <img src='assets/timer.png' width='25' height='25' alt='logo'/>
+    <code>Days Since</code> - the Discord Bot
+</h2>
 
 A _light-weight_, __open-source__ __Discord__ bot written in `Discord.js` with `TypeScript` that is used to track the number of days since a desired date provided by the user.
 
