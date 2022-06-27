@@ -4,7 +4,7 @@
     <code>Days Since</code> - the Discord Bot
 </h2>
 
-A _light-weight_, __open-source__ __Discord__ bot written in `Discord.js` with `TypeScript` that is used to track the number of days since a desired date provided by the user.
+A _light-weight_, __open-source__ __Discord__ bot written in `Discord.js` with `TypeScript` that is used to track the number of days since a desired date provided by the user. __Add__ me to your server ~ [link](https://discord.com/oauth2/authorize?client_id=990906101644005426&permissions=51264&scope=bot).
 
 ### Usage
 
