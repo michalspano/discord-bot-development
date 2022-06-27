@@ -27,7 +27,7 @@ client.on('messageCreate', async (msg: DiscordJS.Message): Promise<void> => {
         const command: string = msg.content.trim().split(' ')[1];
 
         if (!command) {  // show the usage if no command is provided
-            await msg.react(OK_EMOJI); 
+            await msg.react(OK_EMOJI); -
             await msg.channel.send({ embeds: [embedUsage(client.user!.id)] });
 
         } else {
@@ -36,13 +36,15 @@ client.on('messageCreate', async (msg: DiscordJS.Message): Promise<void> => {
 
             if (command === 'count') {
                 if (args.length == 1) {
-                    msg.react(OK_EMOJI); // react that the command is being processed
+                    await msg.react(OK_EMOJI); // react that the command is being processed
 
                     const [day, month, year]: string[] = args[0].split(':');
-                    TIME.year = Number(year); TIME.month = Number(month); TIME.day = Number(day);
+
+                    // we use the Math.abs() method to ensure no data is negative
+                    TIME.year = Math.abs(Number(year)); TIME.month = Math.abs(Number(month)); TIME.day = Math.abs(Number(day));
 
                     // detect if any is NaN => invalid date (error)
-                    if ((Object.keys(TIME).map(key => TIME[key]).filter(val => isNaN(val))).length) {
+                    if ((Object.keys(TIME).map((key: string) => TIME[key]).filter(val => isNaN(val))).length) {
                         await msg.react(ERROR); await msg.reactions.resolve(OK_EMOJI)?.remove();
                         return;
                     }
@@ -54,7 +56,7 @@ client.on('messageCreate', async (msg: DiscordJS.Message): Promise<void> => {
                         return; 
                     }
                     // embed the final result, indicating that no error was found   
-                    const dayStartFormat: string = args[0].split(';').join(' ');
+                    const dayStartFormat: string = (Object.keys(TIME).map((key: string) => TIME[key])).join(':');
                     await msg.channel.send({ embeds: [embedDaysSince(dayCount, dayStartFormat)] });
 
                 } else {
