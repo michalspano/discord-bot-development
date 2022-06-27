@@ -25,4 +25,4 @@ Add our bots to your __server__!
 
 [ID1]: https://discord.com/api/oauth2/authorize?client_id=857625724894707732&permissions=2148005952&scope=bot
 [ID2]: https://discord.com/api/oauth2/authorize?client_id=870356613498818560&permissions=259846043712&scope=bot
-[ID3]: https://discord.com/api/oauth2/authorize?client_id=990906101644005426&permissions=51264&scope=bot
+[ID3]: https://discord.com/oauth2/authorize?client_id=990906101644005426&permissions=59456&scope=bot
